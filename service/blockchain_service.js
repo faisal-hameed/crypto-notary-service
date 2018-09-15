@@ -2,56 +2,9 @@
 |  Learn more: Crypto-js: https://github.com/brix/crypto-js  |
 |  =========================================================*/
 const SHA256 = require('crypto-js/sha256');
-const level = require('level');
-const chainDB = './chaindata';
+const LevelDB = require('./level_db.js');
+const chainDB = './db/chaindata-0';
 
-/* ===== Persist data with LevelDB ===================================
-|  Learn more: level: https://github.com/Level/level     |
-|  =============================================================*/
-
-class LevelDB {
-
-    constructor() {
-        this.db = level(chainDB);
-    }
-
-		addLevelDBData(key, value) {
-				return new Promise((resolve, reject) => {
-          this.db.put(key, value, function(err) {
-  						if (err) {
-  								console.log('Block ' + key + ' submission failed', err);
-                  reject(err);
-  						} else {
-                resolve(value);
-              }
-  			  });
-        });
-    }
-
-		// Get data from levelDB with key
-		getLevelDBdata(key) {
-	    return new Promise((resolve, reject) => {
-	        this.db.get(key, (err, value) => {
-	            if (err) {
-	                console.log("DB err: ", err);
-	                reject(err);
-	            } else {
-	                resolve(value);
-	            }
-	        });
-	    });
-		}
-
-		getBlockHeight() {
-			return new Promise((resolve) => {
-        let count = -1;
-		    this.db.createReadStream()
-		    .on('data', () => count++)
-        .on('error', () => reject(NaN))
-		    .on('close', () => resolve(count));
-		  });
-		}
-}
 
 /* ===== Block Class ==============================
 |  Class with a constructor for block 			   |
@@ -73,7 +26,7 @@ class Block{
 
 class Blockchain{
    constructor(){
-		this.db = new LevelDB();
+		this.db = new LevelDB(chainDB);
 		let height = this.getBlockHeight().then((height) => {
 			if (height < 0){
 				console.log('Adding genesis block');
@@ -100,7 +53,7 @@ class Blockchain{
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
     // Adding block object to chain
-		let result = await this.db.addLevelDBData(newBlock.height, JSON.stringify(newBlock).toString());
+		let result = await this.db.add(newBlock.height, JSON.stringify(newBlock).toString());
 
     return newBlock;
   }
@@ -108,14 +61,17 @@ class Blockchain{
     // Get block height
 		async getBlockHeight(blockHeight){
       // return object as a single string
-		  let height = await this.db.getBlockHeight();
+		  let height = await this.db.countRows();
 			return height;
     }
 
     // get block
     async getBlock(blockHeight){
       // return object as a single string
-		  let block = await this.db.getLevelDBdata(blockHeight);
+      let block = await this.db.get(blockHeight);
+      if (block == null){
+        throw new Error('Block not found with height : ' + blockHeight);
+      }
 			return JSON.parse(block);
     }
 

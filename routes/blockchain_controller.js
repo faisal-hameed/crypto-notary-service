@@ -1,5 +1,5 @@
 const express = require('express');
-const {Blockchain} = require('./simpleChain.js');
+const {Blockchain} = require('../service/blockchain_service.js');
 const router = express.Router();
 const blockchain = new Blockchain();
 
