@@ -68,9 +68,9 @@ class LevelDB {
             let blocks = [];
             this.db.createReadStream()
                 .on('data', function(data) {                    
-                    let block = JSON.parse(data.value);
-                    console.log('data>> : ' + JSON.stringify(block));
-                    if(block.address === address){                        
+                    let block = JSON.parse(data.value);                    
+                    if(block.address === address){     
+                        console.log('data>> : ' + JSON.stringify(block));                   
                         blocks.push(block);
                     }                    
                 })

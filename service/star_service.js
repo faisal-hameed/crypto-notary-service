@@ -1,6 +1,4 @@
-const LevelDB = require('./level_db.js');
-
-const chainDB = '../db/notary-db';
+const Globals = require('./globals');
 
 /* ===== StarService Class ==========================
 |  Class with a constructor for new StarService 		|
@@ -8,8 +6,8 @@ const chainDB = '../db/notary-db';
 
 class StarService {
   constructor() {
-    console.log("StarService DB initialized : " + chainDB);
-    this.db = new LevelDB(chainDB);
+    console.log("StarService DB initialized : " + Globals.NotaryDB);
+    this.db = Globals.NotaryDB;
   }
 
   // Find start by address, may return multiple stars owned by same address
@@ -19,9 +17,9 @@ class StarService {
     let decodedStars = [];
     blocks.forEach(function (block) {
       if (block.star) {
-        decodedStars.push(decodeStory(block));
+        decodedStars.push(this.decodeStory(block));
       }
-    });
+    }, this);
     return decodedStars;
   }
 

@@ -1,23 +1,20 @@
 // Setup libraries
-const bitcoinMessage = require('bitcoinjs-message')
-const util = require('util')
-const LevelDB = require('./level_db')
+const bitcoinMessage = require('bitcoinjs-message');
+const util = require('util');
+const Globals = require('./globals');
 
-const VALIDATION_WINDOW = 300; //seconds (5 minutes)
-const STAR_REGITRY = 'starRegistry';
-const USER_DB = './db/user_db';
 
 class MessageValidator {
 
     constructor() {
-        this.userDB = new LevelDB(USER_DB);
-        console.log('User DB inititialized : ' + USER_DB);
+        this.userDB = Globals.UsersDB;
+        console.log('User DB inititialized : ' + Globals.UsersDB);
     }
 
     async requestValidation(address, readOnly) {
         console.log("requestValidation(address) : " + address);
         let requestTime = (new Date()).getTime();
-        let validationWindow = VALIDATION_WINDOW;
+        let validationWindow = Globals.ValidationWindow;
 
         let lastRequestTime = await this.userDB.get(address);
         if (lastRequestTime) {
@@ -43,7 +40,7 @@ class MessageValidator {
 
         }
         console.log(util.format('Validation window %d: ', validationWindow));
-        return new ValidationResponse(address, requestTime, STAR_REGITRY, validationWindow);
+        return new ValidationResponse(address, requestTime, Globals.StarRegistry, validationWindow);
     }
 
 
@@ -51,7 +48,7 @@ class MessageValidator {
         // Validate whether address exsists
         let validation = await this.requestValidation(address, true);
 
-        let isValid = bitcoinMessage.verify(STAR_REGITRY, address, messageSignature);
+        let isValid = bitcoinMessage.verify(Globals.StarRegistry, address, messageSignature);
         validation.registerStar = isValid;
         // Return true/false
         return validation;

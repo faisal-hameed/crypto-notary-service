@@ -2,12 +2,10 @@
 |  Learn more: Crypto-js: https://github.com/brix/crypto-js  |
 |  =========================================================*/
 const SHA256 = require('crypto-js/sha256');
-const LevelDB = require('./level_db.js');
+const Globals = require('./globals');
 const MessageValidator = require('./validation_service.js');
 
-const chainDB = '../db/notary-db';
-const MAX_STORY_LENGTH = 250; // maximum story length allowed
-// const validator = new MessageValidator();
+const validator = new MessageValidator();
 
 
 /* ===== Block Class ==============================
@@ -30,8 +28,8 @@ class Block {
 
 class Blockchain {
   constructor() {
-    console.log("Blockchain DB initialized : " + chainDB);
-    this.db = new LevelDB(chainDB);
+    console.log("Blockchain DB initialized : " + Globals.NotaryDB);
+    this.db = Globals.NotaryDB;
     let height = this.getBlockHeight().then((height) => {
       if (height < 0) {
         console.log('Adding genesis block');
@@ -53,13 +51,13 @@ class Blockchain {
   async addBlock(newBlock) {
     console.log("adding new block");
 
-    // TODO Validate wallet address
-    // let validation = validator.requestValidation(newBlock.address, true);
+    // Validate wallet address
+    let validation = await validator.requestValidation(newBlock.address, true);
 
     // Validate star story
     let story = newBlock.star.story;
-    if (story.lenght > MAX_STORY_LENGTH) {
-      throw new Error("Maximum start story length exceeded, allowed : " + MAX_STORY_LENGTH);
+    if (story.lenght > Globals.MaxStoryLength) {
+      throw new Error("Maximum start story length exceeded, allowed : " + Globals.MaxStoryLength);
     }
 
     // Block height
