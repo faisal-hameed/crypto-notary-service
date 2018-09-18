@@ -13,7 +13,7 @@ class LevelDB {
     // Add data in levelDB with key
     add(key, value) {
         return new Promise((resolve, reject) => {
-            this.db.put(key, value, function(err) {
+            this.db.put(key, value, function (err) {
                 if (err) {
                     console.log('Data ' + key + ' submission failed', err);
                     reject(err);
@@ -27,7 +27,7 @@ class LevelDB {
     // Deelete data from levelDB with key
     del(key, value) {
         return new Promise((resolve, reject) => {
-            this.db.del(key, value, function(err) {
+            this.db.del(key, value, function (err) {
                 if (err) {
                     console.log('Data ' + key + ' deletion failed', err);
                     reject(err);
@@ -57,9 +57,39 @@ class LevelDB {
         return new Promise((resolve) => {
             let count = -1;
             this.db.createReadStream()
-            .on('data', () => count++)
-            .on('error', () => reject(NaN))
-            .on('close', () => resolve(count));
+                .on('data', () => count++)
+                .on('error', () => reject(NaN))
+                .on('close', () => resolve(count));
+        });
+    }
+
+    findByAddress(address) {
+        return new Promise((resolve) => {
+            let blocks = [];
+            this.db.createReadStream()
+                .on('data', function(data) {                    
+                    let block = JSON.parse(data.value);
+                    console.log('data>> : ' + JSON.stringify(block));
+                    if(block.address === address){                        
+                        blocks.push(block);
+                    }                    
+                })
+                .on('error', () => reject(NaN))
+                .on('close', () => resolve(blocks));
+        });
+    }
+
+    findByBlockHash(blockHash) {
+        return new Promise((resolve) => {
+            this.db.createReadStream()
+                .on('data', function(data) {
+                    let block = JSON.parse(data.value);
+                    console.log('data : ' + JSON.stringify(block));        
+                    if(block.hash === blockHash){                  
+                        resolve(block);
+                    }                    
+                })
+                .on('error', () => reject(NaN));
         });
     }
 }

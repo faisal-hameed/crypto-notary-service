@@ -9,32 +9,32 @@ const USER_DB = './db/user_db';
 
 class MessageValidator {
 
-    constructor(){
+    constructor() {
         this.userDB = new LevelDB(USER_DB);
         console.log('User DB inititialized : ' + USER_DB);
     }
 
     async requestValidation(address, readOnly) {
-        console.log("requestValidation(address) : "+ address);
+        console.log("requestValidation(address) : " + address);
         let requestTime = (new Date()).getTime();
         let validationWindow = VALIDATION_WINDOW;
 
         let lastRequestTime = await this.userDB.get(address);
-        if(lastRequestTime){
+        if (lastRequestTime) {
             // re-request from same address
-            let timeElapsed = (requestTime - lastRequestTime)/1000;
+            let timeElapsed = (requestTime - lastRequestTime) / 1000;
             console.log("Time elapsed : " + timeElapsed);
             validationWindow = validationWindow - timeElapsed;
             requestTime = lastRequestTime;
 
             // if validation window expired, remove address from DB and restart process
-            if (validationWindow < 0 ){             
+            if (validationWindow < 0) {
                 let deleted = await this.userDB.del(address);
                 throw Error('Validation window time expired, please restart validation process');
             }
         } else {
             // Trying to re-use this method in validateSignature 
-            if (readOnly){
+            if (readOnly) {
                 throw Error('Error, Unable to validate signature. You may need to request validation first.');
             }
             // First time request, save address/requestTime
@@ -46,7 +46,7 @@ class MessageValidator {
         return new ValidationResponse(address, requestTime, STAR_REGITRY, validationWindow);
     }
 
-    
+
     async validateSignature(address, messageSignature) {
         // Validate whether address exsists
         let validation = await this.requestValidation(address, true);
@@ -61,7 +61,7 @@ class MessageValidator {
 
 
 class ValidationResponse {
-    constructor(address, requestTimeStamp, starRegistry, validationWindow){
+    constructor(address, requestTimeStamp, starRegistry, validationWindow) {
         this.address = address;
         this.requestTimeStamp = requestTimeStamp;
         this.starRegistry = starRegistry;
@@ -69,9 +69,9 @@ class ValidationResponse {
         this.registerStar = false;
     }
 
-    getMessage(){
+    getMessage() {
         return `${this.address}:${this.requestTimeStamp}:${this.starRegistry}`;
-    }    
+    }
 }
 
 module.exports = MessageValidator
