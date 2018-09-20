@@ -1,8 +1,9 @@
 # Blockchain Backed Star Notary
 Star Notary service allows users to claim ownership of their favorite star in the night sky.  
-Star Notary Service is provided to confirm:
+Star Notary Service is provided to make sure:
 1. Proof of existence
 2. Proof of ownership
+3. Security of assets
 
 ## Getting Started
 
@@ -39,20 +40,20 @@ You should see this message **Welcome to Star Notary Service**
 
 ## Application Architecture
 Application is structured in 3 layers:
-1. Controllers
+1. Controllers  
 Controllers are the entry points of this application. Endpoints are defined in controllers (./routes folder)
-2. Services
+2. Services  
 Services are actual implementation of -blockchain- concepts e.g. (hashing, validation, integrity etc...)
-3. Database
+3. Database  
 Level DB is used to persist actual -blockchain- data.
 
 ### Modules
 Application is divided into 3 different modules.
-1. Validation Service
+1. Validation Service  
 To validate user's address (blockchain ID)
-2. Blockchain Service
+2. Blockchain Service  
 To save stars information in registry
-3. Star Service
+3. Star Service  
 Provides convenient methods to lookup stars by (address/hash)
 
 ## APIs
@@ -130,12 +131,14 @@ After receiving the response, users will prove their blockchain identity by sign
 ```
     {
       "registerStar": true,
-      "status": {
-      "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-      "requestTimeStamp": "1532296090",
-      "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
-      "validationWindow": 193,
-      "messageSignature": "valid"
+      "status":
+      {
+        "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+        "requestTimeStamp": "1532296090",
+        "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+        "validationWindow": 193,
+        "messageSignature": "valid"
+      }
     }
 ```
 
@@ -170,10 +173,12 @@ After receiving the response, users will prove their blockchain identity by sign
 ```
     {
       "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-      "star": {
-      "dec": "-26° 29'\'' 24.9",
-      "ra": "16h 29m 1.0s",
-      "story": "Found star using https://www.google.com/sky/"
+      "star":
+      {
+        "dec": "-26° 29'\'' 24.9",
+        "ra": "16h 29m 1.0s",
+        "story": "Found star using https://www.google.com/sky/"
+      }
     }
 ```
 
@@ -185,9 +190,11 @@ After receiving the response, users will prove their blockchain identity by sign
     {
         "hash": "a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f",
         "height": 1,
-        "body": {
+        "body":
+        {
           "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-          "star": {
+          "star":
+          {
             "ra": "16h 29m 1.0s",
             "dec": "-26° 29' 24.9",
             "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f"
@@ -235,9 +242,11 @@ Returns Star at particular block height
     {
         "hash": "a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f",
         "height": 1,
-        "body": {
+        "body":
+        {
           "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-          "star": {
+          "star":
+          {
             "ra": "16h 29m 1.0s",
             "dec": "-26° 29' 24.9",
             "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f"
@@ -286,9 +295,11 @@ Returns all stars owned by address [blockchainID]
         {
         "hash": "a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f",
         "height": 1,
-        "body": {
+        "body":
+        {
           "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-          "star": {
+          "star":
+          {
             "ra": "16h 29m 1.0s",
             "dec": "-26° 29' 24.9",
             "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
@@ -301,9 +312,11 @@ Returns all stars owned by address [blockchainID]
         {
         "hash": "6ef99fc533b9725bf194c18bdf79065d64a971fa41b25f098ff4dff29ee531d0",
         "height": 2,
-        "body": {
+        "body":
+        {
           "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-          "star": {
+          "star":
+          {
             "ra": "17h 22m 13.1s",
             "dec": "-27° 14' 8.2",
             "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
