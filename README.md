@@ -5,6 +5,9 @@ Star Notary Service is provided to make sure:
 2. Proof of ownership
 3. Security of assets
 
+<img src="./public/images/star.jpg" alt="Drawing" style="width: 800px;"/>
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.  
