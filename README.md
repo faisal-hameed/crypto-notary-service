@@ -1,4 +1,4 @@
-# Blockchain Backed Star Notary
+# Star Notary Service (Blockchain Backed)
 Star Notary service allows users to claim ownership of their favorite star in the night sky.  
 Star Notary Service is provided to make sure:
 1. Proof of existence
