@@ -26,6 +26,9 @@ class StarService {
   // Find start by block hash
   async findByBlockHash(blockHash) {
     let block = await this.db.findByBlockHash(blockHash);
+    if (!block) {
+      throw new Error('Star not found with hash.');
+    }
     // Decode star story from HEX
     block = this.decodeStory(block);
     return block;

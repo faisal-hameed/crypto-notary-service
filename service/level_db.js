@@ -89,7 +89,8 @@ class LevelDB {
                         resolve(block);
                     }                    
                 })
-                .on('error', () => reject(NaN));
+                .on('error', () => reject(NaN))
+                .on('close', () => resolve(null));
         });
     }
 }
