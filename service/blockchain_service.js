@@ -39,7 +39,7 @@ class Blockchain {
             'story': 'Star Registry story just begins'
           }
         }
-        this.addBlock(genesis)
+        this.addBlock(genesis, true)
           .catch((err) => {
             console.log(err);
           });
@@ -48,15 +48,22 @@ class Blockchain {
   }
 
   // Add new block
-  async addBlock(newBlock) {
+  async addBlock(newBlock, isGenesisBlock) {
     console.log("adding new block");
 
-    // Validate wallet address
-    let validation = await validator.requestValidation(newBlock.address, true);
+    // Skip validation for Genesis block
+    if (!isGenesisBlock) {
+      // Validate wallet address
+      let validation = await validator.requestValidation(newBlock.address, true);
+      // If signature is not Valid
+      if (!validation.registerStar) {
+        throw new Error('Can\'t register star. Signature is not valid.');
+      }
+    }
 
     // Validate star story
     let story = newBlock.star.story;
-    if (story.lenght > Globals.MaxStoryLength) {
+    if (story.length > Globals.MaxStoryLength) {
       throw new Error("Maximum start story length exceeded, allowed : " + Globals.MaxStoryLength);
     }
 
@@ -81,6 +88,12 @@ class Blockchain {
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
     // Adding block object to chain
     let result = await this.db.add(newBlock.height, JSON.stringify(newBlock).toString());
+
+    // After successfully adding star, remove user registration
+    if (result) {
+      let deleted = validator.removeValidation(newBlock.address);
+      console.log("User address remove : " + deleted);
+    }
 
     return newBlock;
   }

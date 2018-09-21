@@ -16,8 +16,9 @@ Following technologies are used in this project:
 1. Express framework for web services
 2. `express-generator`, to quickly create an application skeleton.
 3. LevelDB to persist blocks
-4. crypto-js library to encrypt blocks
-5. `bitcoinjs-message` to validate signature
+4. `memory-cache` to handle user sessions
+5. crypto-js library to encrypt blocks
+6. `bitcoinjs-message` to validate signature
 
 ### Prerequisites
 
@@ -47,7 +48,7 @@ Application is structured in 3 layers:
 Controllers are the entry points of this application. Endpoints are defined in controllers (./routes folder)
 2. Services  
 Services are actual implementation of -blockchain- concepts e.g. (hashing, validation, integrity etc...)
-3. Database  
+3. Database
 Level DB is used to persist actual -blockchain- data.
 
 ### Modules
@@ -58,6 +59,11 @@ To validate user's address (blockchain ID)
 To save stars information in registry
 3. Star Service  
 Provides convenient methods to lookup stars by (address/hash)
+
+### Star Registration rules
+1. User needs to validate himself everytime he wants to register a star
+2. Validation window time is 300 sec, after expiry [s]he needs to re-star validation process
+3. Star story text lenght should not exceeds 250 words
 
 ## APIs
 Following APIs are implemented. Use any REST client to test below APIs
@@ -274,7 +280,7 @@ Returns Star at particular block height
 ----
 
 ### 5. Get Stars by address
-    http://localhost:8000/block/142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ
+    http://localhost:8000/stars/address/142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ
 
 Returns all stars owned by address [blockchainID]
 
@@ -346,7 +352,7 @@ Returns all stars owned by address [blockchainID]
 ----
 
 ### 6. Get Star by block hash
-    http://localhost:8000/block/a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f
+    http://localhost:8000/stars/hash/a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f
 
 Returns star info by blockHash
 

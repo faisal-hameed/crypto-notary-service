@@ -2,45 +2,45 @@
 const bitcoinMessage = require('bitcoinjs-message');
 const util = require('util');
 const Globals = require('./globals');
+const session = require('memory-cache');
 
 
 class MessageValidator {
 
-    constructor() {
-        this.userDB = Globals.UsersDB;
-        console.log('User DB inititialized : ' + Globals.UsersDB);
+    constructor() {        
     }
 
     async requestValidation(address, readOnly) {
         console.log("requestValidation(address) : " + address);
         let requestTime = (new Date()).getTime();
-        let validationWindow = Globals.ValidationWindow;
 
-        let lastRequestTime = await this.userDB.get(address);
-        if (lastRequestTime) {
+        let oldValidation = session.get(address);
+        console.log("Old Validation : " + JSON.stringify(oldValidation));
+        if (oldValidation) {
             // re-request from same address
+            let lastRequestTime = oldValidation.requestTimeStamp;
             let timeElapsed = (requestTime - lastRequestTime) / 1000;
             console.log("Time elapsed : " + timeElapsed);
-            validationWindow = validationWindow - timeElapsed;
-            requestTime = lastRequestTime;
-
-            // if validation window expired, remove address from DB and restart process
-            if (validationWindow < 0) {
-                let deleted = await this.userDB.del(address);
-                throw Error('Validation window time expired, please restart validation process');
+            oldValidation.validationWindow = Globals.ValidationWindow - timeElapsed;
+            // If validation window expired, delete validation
+            if(oldValidation.validationWindow < 0) {
+                this.removeValidation(oldValidation.address);
+                throw new Error("Validation window expired. Please re-start validation process.");
             }
+            // Return same validation object
+            return oldValidation;
         } else {
-            // Trying to re-use this method in validateSignature 
+            // Trying to re-use this method in validateSignature
             if (readOnly) {
                 throw Error('Error, Unable to validate signature. You may need to request validation first.');
             }
-            // First time request, save address/requestTime
-            let saved = await this.userDB.add(address, requestTime);
             console.log('First time request save at : ' + requestTime);
+            // First time request, save address/validation
+            let newValidation = new ValidationResponse(address, requestTime, Globals.StarRegistry, Globals.ValidationWindow);
+            this.saveValidation(newValidation);            
+            return newValidation;
 
-        }
-        console.log(util.format('Validation window %d: ', validationWindow));
-        return new ValidationResponse(address, requestTime, Globals.StarRegistry, validationWindow);
+        }        
     }
 
 
@@ -48,10 +48,22 @@ class MessageValidator {
         // Validate whether address exsists
         let validation = await this.requestValidation(address, true);
 
+        // Validation message is always same [starRegistry], right?
         let isValid = bitcoinMessage.verify(Globals.StarRegistry, address, messageSignature);
         validation.registerStar = isValid;
-        // Return true/false
+        //
+        this.saveValidation(validation);
+        // Return validation object
         return validation;
+    }
+
+    saveValidation(validationObj) {
+        session.put(validationObj.address, validationObj);
+        console.log('Session size >> ' + session.exportJson());
+    }
+
+    removeValidation(address) {
+        return session.del(address);
     }
 
 }
