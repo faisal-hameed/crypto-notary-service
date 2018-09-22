@@ -112,7 +112,7 @@ Allows users to request validation for `Star Registry`.
 ```
 ----
 
-### 2. Validate
+### 2. Validate Signature
 http://localhost:8000/validation/validate  
 After receiving the response, users will prove their blockchain identity by signing a message with their wallet. Once they sign this message, the application will validate their request and grant access to register a star.
 
@@ -227,7 +227,7 @@ After receiving the response, users will prove their blockchain identity by sign
 ```
 ----
 
-### 4. Get Star block height
+### 4. Get Star by block height
     http://localhost:8000/block/1
 
 Returns Star at particular block height
@@ -402,3 +402,29 @@ Returns star info by blockHash
         "message": "Error: Star not found with hash."
     }
 ```
+
+### 7. Validate Blockchain
+    http://localhost:8000/block/validate
+
+Validate blockchain integrity
+
+  * **URL**
+
+    /block/validate
+
+  * **Method:**
+
+    `GET`
+
+
+  * **Success Response:**
+
+    * **Code:** 200
+    * **Content:**
+    `Great!! Blockchain is valid`
+
+  * **Error Response:**
+
+    * **Code:** 200
+    * **Content:**
+    `Opps!! Blockchain is Invalid`

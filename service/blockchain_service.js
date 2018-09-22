@@ -15,10 +15,10 @@ const validator = new MessageValidator();
 class Block {
   constructor(data) {
     this.hash = "",
-      this.height = 0,
-      this.body = data,
-      this.time = 0,
-      this.previousBlockHash = ""
+    this.height = 0,
+    this.body = data,
+    this.time = 0,
+    this.previousBlockHash = ""
   }
 }
 
@@ -33,13 +33,13 @@ class Blockchain {
     let height = this.getBlockHeight().then((height) => {
       if (height < 0) {
         console.log('Adding genesis block');
-        let genesis = {
+        let genesisBlockData = {
           'address': 'genisi-block-address',
           'star': {
             'story': 'Star Registry story just begins'
           }
         }
-        this.addBlock(genesis, true)
+        this.addBlock(genesisBlockData, true)
           .catch((err) => {
             console.log(err);
           });
@@ -48,13 +48,14 @@ class Blockchain {
   }
 
   // Add new block
-  async addBlock(newBlock, isGenesisBlock) {
-    console.log("adding new block");
+  async addBlock(blockData, isGenesisBlock) {
+    let newBlock = new Block(blockData);
+    console.log("adding new block " + JSON.stringify(newBlock));
 
     // Skip validation for Genesis block
     if (!isGenesisBlock) {
       // Validate wallet address
-      let validation = await validator.requestValidation(newBlock.address, true);
+      let validation = await validator.requestValidation(newBlock.body.address, true);
       // If signature is not Valid
       if (!validation.registerStar) {
         throw new Error('Can\'t register star. Signature is not valid.');
@@ -62,7 +63,7 @@ class Blockchain {
     }
 
     // Validate star story
-    let story = newBlock.star.story;
+    let story = newBlock.body.star.story;
     if (story.length > Globals.MaxStoryLength) {
       throw new Error("Maximum start story length exceeded, allowed : " + Globals.MaxStoryLength);
     }
@@ -76,24 +77,26 @@ class Blockchain {
     newBlock.time = new Date().getTime().toString().slice(0, -3);
     // previous block hash
     if (height > 0) {
-      let prevBlock = await this.getBlock(height - 1);
+      let prevBlock = await this.getBlock(height - 1, false);
       newBlock.previousBlockHash = prevBlock.hash;
     }
 
 
     // Encode star story in hex before saving
-    newBlock.star.story = Buffer.from(story, 'utf8').toString('hex');
+    newBlock.body.star.story = Buffer.from(story, 'utf8').toString('hex');
 
+    console.log('Generate hash of block : ' + JSON.stringify(newBlock));
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
+
     // Adding block object to chain
     let result = await this.db.add(newBlock.height, JSON.stringify(newBlock).toString());
 
     // After successfully adding star, remove user registration
     if (result) {
-      let deleted = validator.removeValidation(newBlock.address);
+      let deleted = validator.removeValidation(newBlock.body.address);
       console.log("User address remove : " + deleted);
-    }
+    }    
 
     return newBlock;
   }
@@ -101,24 +104,27 @@ class Blockchain {
   // Get block height
   async getBlockHeight(blockHeight) {
     // return object as a single string
-    let height = await this.db.countRows();
+    let height = await this.db.countRows() - 1;
     return height;
   }
 
   // get block
-  async getBlock(blockHeight) {
+  async getBlock(blockHeight, decodeStory) {
     // return object as a single string
     let blockStr = await this.db.get(blockHeight);
     let block = JSON.parse(blockStr);
     if (block == null) {
       throw new Error('Block not found with height : ' + blockHeight);
     }
-    return this.decodeStory(block);
+    if (decodeStory) {
+      block = this.decodeStory(block);
+    }
+    return block;
   }
 
   decodeStory(block) {
     if (block) {
-      block.star.storyDecoded = new Buffer(block.star.story, 'hex').toString();
+      block.body.star.storyDecoded = new Buffer(block.body.star.story, 'hex').toString();
     }
     return block;
   }
@@ -126,12 +132,13 @@ class Blockchain {
   // validate block
   async validateBlock(blockHeight) {
     // get block object
-    let block = await this.getBlock(blockHeight);
+    let block = await this.getBlock(blockHeight, false);    
     // get block hash
     let blockHash = block.hash;
     // remove block hash to test block integrity
     block.hash = '';
     // generate block hash
+    console.log('Validating block : ' + JSON.stringify(block));
     let validBlockHash = SHA256(JSON.stringify(block)).toString();
     // Compare
     if (blockHash === validBlockHash) {
@@ -146,17 +153,18 @@ class Blockchain {
   async validateChain() {
     let errorLog = [];
     let height = await this.getBlockHeight();
-    for (var i = 0; i < height - 1; i++) {
+    console.log('Chain height : ' + height);
+    for (var i = 0; i < height; i++) {
       // validate block
       let isBlockValid = await this.validateBlock(i);
       if (!isBlockValid)
         errorLog.push(i);
-      // compare blocks hash link
-      let block = await this.getBlock(i);
-      let previousBlock = await this.getBlock(i + 1);
+      // compare blocks hash link with next block
+      let block = await this.getBlock(i, false);
+      let nextBlock = await this.getBlock(i + 1, false);
       console.log(block.hash)
-      console.log(previousBlock.previousBlockHash)
-      if (block.hash !== previousBlock.previousBlockHash) {
+      console.log(nextBlock.previousBlockHash)
+      if (block.hash !== nextBlock.previousBlockHash) {
         errorLog.push(i);
       }
     }
@@ -175,7 +183,3 @@ module.exports = {
   Blockchain: Blockchain,
   Block: Block
 }
-
-//let blockchain = new Blockchain();
-//blockchain.validateChain().then((data) => console.log(data));
-// blockchain.addBlock(new Block("New block 1"));

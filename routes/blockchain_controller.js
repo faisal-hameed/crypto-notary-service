@@ -5,7 +5,7 @@ const blockchain = new Blockchain();
 
 /* Get block at height. */
 router.get('/:blockHeight(\\d+)', function (req, res, next) {
-  blockchain.getBlock(req.params.blockHeight)
+  blockchain.getBlock(req.params.blockHeight, true)
     .then(function (data) {
       console.log('Handle getBlock(:blockHeight)');
       res.send(JSON.stringify(data));

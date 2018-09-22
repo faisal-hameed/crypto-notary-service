@@ -55,7 +55,7 @@ class LevelDB {
     // Count all keys in levelDB
     countRows() {
         return new Promise((resolve) => {
-            let count = -1;
+            let count = 0;
             this.db.createReadStream()
                 .on('data', () => count++)
                 .on('error', () => reject(NaN))
@@ -69,8 +69,8 @@ class LevelDB {
             this.db.createReadStream()
                 .on('data', function(data) {                    
                     let block = JSON.parse(data.value);                    
-                    if(block.address === address){     
-                        console.log('data>> : ' + JSON.stringify(block));                   
+                    if(block.body.address === address){     
+                        console.log('data>> : ' + JSON.stringify(block));   
                         blocks.push(block);
                     }                    
                 })
@@ -84,7 +84,7 @@ class LevelDB {
             this.db.createReadStream()
                 .on('data', function(data) {
                     let block = JSON.parse(data.value);
-                    console.log('data : ' + JSON.stringify(block));        
+                    console.log('data : ' + JSON.stringify(block));
                     if(block.hash === blockHash){                  
                         resolve(block);
                     }                    
