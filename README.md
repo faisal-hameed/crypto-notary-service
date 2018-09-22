@@ -48,7 +48,7 @@ Application is structured in 3 layers:
 Controllers are the entry points of this application. Endpoints are defined in controllers (./routes folder)
 2. Services  
 Services are actual implementation of -blockchain- concepts e.g. (hashing, validation, integrity etc...)
-3. Database
+3. Database  
 Level DB is used to persist actual -blockchain- data.
 
 ### Modules
@@ -62,7 +62,7 @@ Provides convenient methods to lookup stars by (address/hash)
 
 ### Star Registration rules
 1. User needs to validate himself everytime he wants to register a star
-2. Validation window time is 300 sec, after expiry [s]he needs to re-star validation process
+2. Validation window time is 300 sec, after expiry [s]he needs to re-start validation process
 3. Star story text lenght should not exceeds 250 words
 
 ## APIs
@@ -84,7 +84,7 @@ Allows users to request validation for `Star Registry`.
 
   *  **Request Body**
 
-     `{"address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ"}`
+     `{"address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7"}`
 
 * **Success Response:**
 
@@ -92,9 +92,9 @@ Allows users to request validation for `Star Registry`.
   * **Content:**
 ```
     {
-      "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+      "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
       "requestTimeStamp": "1532296090",
-      "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+      "message": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7:1532296090:starRegistry",
       "validationWindow": 300
      }
 ```
@@ -128,8 +128,8 @@ After receiving the response, users will prove their blockchain identity by sign
 
 ```
      {
-       "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
-       "signature": "H6ZrGrF0Y4rMGBMRT2+hHWGbThTIyhBS0dNKQRov9Yg6GgXcHxtO9GJN4nwD2yNXpnXHTWU9i+qdw5vpsooryLU="
+       "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
+       "signature": "ILRRa2Ul2NzgEuVDMSZwTsMBPW1UsCtrZwduCIouK4HVId8g3UyQKkgsPO2MZokqokClTnU8FVbXzMqb6sN89mQ="
      }
 ```
 
@@ -142,9 +142,9 @@ After receiving the response, users will prove their blockchain identity by sign
       "registerStar": true,
       "status":
       {
-        "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+        "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
         "requestTimeStamp": "1532296090",
-        "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+        "message": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7:1532296090:starRegistry",
         "validationWindow": 193,
         "messageSignature": "valid"
       }
@@ -181,7 +181,7 @@ After receiving the response, users will prove their blockchain identity by sign
 
 ```
     {
-      "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+      "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
       "star":
       {
         "dec": "-26° 29'\'' 24.9",
@@ -201,7 +201,7 @@ After receiving the response, users will prove their blockchain identity by sign
         "height": 1,
         "body":
         {
-          "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+          "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
           "star":
           {
             "ra": "16h 29m 1.0s",
@@ -253,7 +253,7 @@ Returns Star at particular block height
         "height": 1,
         "body":
         {
-          "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+          "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
           "star":
           {
             "ra": "16h 29m 1.0s",
@@ -280,7 +280,7 @@ Returns Star at particular block height
 ----
 
 ### 5. Get Stars by address
-    http://localhost:8000/stars/address/142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ
+    http://localhost:8000/stars/address/1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7
 
 Returns all stars owned by address [blockchainID]
 
@@ -306,7 +306,7 @@ Returns all stars owned by address [blockchainID]
         "height": 1,
         "body":
         {
-          "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+          "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
           "star":
           {
             "ra": "16h 29m 1.0s",
@@ -323,7 +323,7 @@ Returns all stars owned by address [blockchainID]
         "height": 2,
         "body":
         {
-          "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+          "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
           "star":
           {
             "ra": "17h 22m 13.1s",
@@ -377,7 +377,7 @@ Returns star info by blockHash
         "height": 1,
         "body":
           {
-            "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+            "address": "1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7",
             "star":
             {
               "ra": "16h 29m 1.0s",
