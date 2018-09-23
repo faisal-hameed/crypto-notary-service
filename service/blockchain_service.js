@@ -64,7 +64,7 @@ class Blockchain {
 
     // Validate star story
     let story = newBlock.body.star.story;
-    if (story.length > Globals.MaxStoryLength) {
+    if (story.split(" ").length > Globals.MaxStoryLength) {
       throw new Error("Maximum start story length exceeded, allowed : " + Globals.MaxStoryLength);
     }
 

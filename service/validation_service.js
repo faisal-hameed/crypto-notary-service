@@ -49,7 +49,7 @@ class MessageValidator {
         let validation = await this.requestValidation(address, true);
 
         // Validation message is always same [starRegistry], right?
-        let isValid = bitcoinMessage.verify(Globals.StarRegistry, address, messageSignature);
+        let isValid = bitcoinMessage.verify(validation.getMessage(), address, messageSignature);
         validation.registerStar = isValid;
         //
         this.saveValidation(validation);
