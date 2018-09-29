@@ -10,15 +10,17 @@ router.get('/address::address', function (req, res, next) {
     .then(function (data) {      
       res.send(data);
     })
+    .catch(function(err) {next(err)});
 });
 
 /* Get block of by block hash. */
 router.get('/hash::blockHash', function (req, res, next) {
   console.log('Handle findByBlockHash(:blockHash)');
   starService.findByBlockHash(req.params.blockHash)
-    .then(function (data) {      
+    .then(function (data) { 
       res.send(data);
     })
+    .catch(function(err) {next(err)});
 });
 
 module.exports = router;

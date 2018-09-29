@@ -74,7 +74,7 @@ class Blockchain {
     }
 
     // Story can have only ascii characters
-    if (!isASCII(story)) {
+    if (!this.isASCII(story)) {
       throw new Error("Story should contain only ascii characters");
     }
 

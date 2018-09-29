@@ -25,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+// Using custom URLs to be consistent
 app.use('/validation', validationRouter);
 app.use('/block', blockRouter);
 app.use('/stars', starsRouter);

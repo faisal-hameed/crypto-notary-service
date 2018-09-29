@@ -10,6 +10,7 @@ router.get('/:blockHeight(\\d+)', function (req, res, next) {
       console.log('Handle getBlock(:blockHeight)');
       res.send(data);
     })
+    .catch(function(err) {next(err)});
 });
 
 router.get('/validate', function (req, res, next) {
@@ -22,6 +23,7 @@ router.get('/validate', function (req, res, next) {
         res.send("Opps!! Blockchain is Invalid");
       }
     })
+    .catch(function(err) {next(err)});
 });
 
 router.post('/', function (req, res, next) {
@@ -35,8 +37,9 @@ router.post('/', function (req, res, next) {
       console.log('new block added ' + JSON.stringify(data));
       res.send(data);
     })
+    .catch(function(err) {next(err)});
   } else {
-    next(`Invalid star object. Expected : {\"dec\":\"\", \"ra\":\"\", \"story\":\"\"}`);
+    next(`Invalid star object. Expected : {"dec":"", "ra":"", "story":""}`);
   }  
 });
 

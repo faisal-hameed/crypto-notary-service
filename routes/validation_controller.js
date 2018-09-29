@@ -17,6 +17,7 @@ router.post('/requestValidation', function (req, res, next) {
           'validationWindow': obj.validationWindow
         });
       })
+      .catch(function(err) {next(err)});
   } else {
     next("Address is not provided");
   }
@@ -39,6 +40,7 @@ router.post('/validate', function (req, res, next) {
         }
       });
     })
+    .catch(function(err) {next(err)});
 });
 
 
