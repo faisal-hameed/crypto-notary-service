@@ -15,10 +15,10 @@ const validator = new MessageValidator();
 class Block {
   constructor(data) {
     this.hash = "",
-    this.height = 0,
-    this.body = data,
-    this.time = 0,
-    this.previousBlockHash = ""
+      this.height = 0,
+      this.body = data,
+      this.time = 0,
+      this.previousBlockHash = ""
   }
 }
 
@@ -47,6 +47,10 @@ class Blockchain {
     });
   }
 
+  isASCII(str) {
+    return /^[\x00-\x7F]*$/.test(str);
+  }
+
   // Add new block
   async addBlock(blockData, isGenesisBlock) {
     let newBlock = new Block(blockData);
@@ -64,8 +68,14 @@ class Blockchain {
 
     // Validate star story
     let story = newBlock.body.star.story;
+    // It was suggested by previous reviewer
     if (story.split(" ").length > Globals.MaxStoryLength) {
       throw new Error("Maximum start story length exceeded, allowed : " + Globals.MaxStoryLength);
+    }
+
+    // Story can have only ascii characters
+    if (!isASCII(story)) {
+      throw new Error("Story should contain only ascii characters");
     }
 
     // Block height
@@ -96,7 +106,7 @@ class Blockchain {
     if (result) {
       let deleted = validator.removeValidation(newBlock.body.address);
       console.log("User address remove : " + deleted);
-    }    
+    }
 
     return newBlock;
   }
@@ -132,7 +142,7 @@ class Blockchain {
   // validate block
   async validateBlock(blockHeight) {
     // get block object
-    let block = await this.getBlock(blockHeight, false);    
+    let block = await this.getBlock(blockHeight, false);
     // get block hash
     let blockHash = block.hash;
     // remove block hash to test block integrity

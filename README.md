@@ -280,13 +280,13 @@ Returns Star at particular block height
 ----
 
 ### 5. Get Stars by address
-    http://localhost:8000/stars/address/1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7
+    http://localhost:8000/stars/address:1CYgQ8wbdWZPGEWgbxZLq5JUe5e1ECWPe7
 
 Returns all stars owned by address [blockchainID]
 
   * **URL**
 
-    /stars/address/:address
+    /stars/address:address
 
   * **Method:**
 
@@ -352,13 +352,13 @@ Returns all stars owned by address [blockchainID]
 ----
 
 ### 6. Get Star by block hash
-    http://localhost:8000/stars/hash/a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f
+    http://localhost:8000/stars/hash:a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f
 
 Returns star info by blockHash
 
   * **URL**
 
-    /stars/hash/:blockHash
+    /stars/hash:blockHash
 
   * **Method:**
 

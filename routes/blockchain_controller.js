@@ -8,16 +8,7 @@ router.get('/:blockHeight(\\d+)', function (req, res, next) {
   blockchain.getBlock(req.params.blockHeight, true)
     .then(function (data) {
       console.log('Handle getBlock(:blockHeight)');
-      res.send(JSON.stringify(data));
-    })
-    .catch(function (err) {
-      console.log('Error getBlock(:blockHeight)' + err);
-      res.status(500).send({
-        'code': '500',
-        'status': 'Internal Server Error',
-        'message': `${err}`
-      }
-      );
+      res.send(data);
     })
 });
 
@@ -36,20 +27,17 @@ router.get('/validate', function (req, res, next) {
 router.post('/', function (req, res, next) {
   console.log('Handle addBlock');
   console.log('Block body : ' + JSON.stringify(req.body));
-  blockchain.addBlock(req.body)
+  let starObj = req.body.star;
+  // Check if required attributes are submitted.
+  if (starObj.dec && starObj.ra && starObj.story){
+    blockchain.addBlock(req.body)
     .then(function (data) {
       console.log('new block added ' + JSON.stringify(data));
-      res.send(JSON.stringify(data));
+      res.send(data);
     })
-    .catch(function (err) {
-      console.log('Error addBlock(data)' + err);
-      res.status(500).send({
-        'code': '500',
-        'status': 'Internal Server Error',
-        'message': `${err}`
-      }
-      );
-    });
+  } else {
+    next(`Invalid star object. Expected : {\"dec\":\"\", \"ra\":\"\", \"story\":\"\"}`);
+  }  
 });
 
 
