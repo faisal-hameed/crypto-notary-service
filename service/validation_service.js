@@ -40,7 +40,7 @@ class MessageValidator {
             this.saveValidation(newValidation);            
             return newValidation;
 
-        }        
+        }       
     }
 
 
@@ -76,6 +76,7 @@ class ValidationResponse {
         this.starRegistry = starRegistry;
         this.validationWindow = validationWindow;
         this.registerStar = false;
+        this.message = this.getMessage();
     }
 
     getMessage() {

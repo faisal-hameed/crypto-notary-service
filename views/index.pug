@@ -3,3 +3,63 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  p Star Notary service allows users to claim ownership of their favorite star in the night sky.
+  h2= "Rules"
+  ul
+    p User needs to validate their address first
+    p Validation window is 5 minute
+    p Star can't be claimed again    
+
+  div
+    h2= "Step-1 : Request-Validation"
+    p Before you claim any star, you need to validate your wallet address (public key)
+    form(action='/validation/requestValidation', method='POST')
+      p
+        | Address: 
+        input(name='address', value='', type='text', size=50)        
+        input(value='Submit', type='submit')
+    if validation
+      h4= "Response"      
+      p Address : #{validation.address}
+      p Message : #{validation.message}
+      p ValidationWindow : #{validation.validationWindow}      
+
+  div
+    h2= "Step-2 : Sign message with private key"
+    p You need to sign message recieved in step-1 with your private key.
+    p You can generate address/private-key pair using link('https://www.bitaddress.org', BitAddress)
+    p <i>Note : Do not expose your private key. This is just for demo purpose, it should be done on local PC/Mobile<i>
+    p Before you claim any star, you need to validate your wallet address (public key)
+    form(action='/validation/sign', method='POST')
+      p        
+        | Address: 
+        input(name='address', value='', type='text', size=50)        
+        |
+        br
+        | Message: 
+        input(name='message', value='', type='text', size=50)        
+        br
+        | PrivateKey: 
+        input(name='privateKey', value='', type='text', size=50)        
+        br
+        input(value='Submit', type='submit')
+    if signature
+      h4= "Message Signature"      
+      p Signature : #{signature}
+
+  div
+    h2= "Step-3 (Signature Validation)"
+    p Send your address and signature for validation
+    form(action='/validation/validate', method='POST')
+      p        
+        | Address: 
+        input(name='address', value='', type='text', size=50)        
+        |
+        br
+        | Signature: 
+        input(name='signature', value='', type='text', size=50)        
+        br
+        input(value='Submit', type='submit')
+    if signatureStatus
+      h4= "Signature Status"
+      p Signature is : #{signatureStatus}

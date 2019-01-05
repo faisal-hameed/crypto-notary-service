@@ -28,6 +28,10 @@ Installing Node and NPM is pretty straightforward using the installer package av
 node --version
 ```
 It should return node version e.g. `v8.9.4`
+Some libraries also require MS Build Tools, you can install it using following command.
+```
+npm install --global --production windows-build-tools
+```
 
 ### Running Blockchain web service
 - Installing project dependencies
